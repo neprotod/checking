@@ -1,7 +1,12 @@
 const {Router} = require('express');
 const route = Router();
 
+const tasksRouters = require('./task/routing');
+const userRouters = require('./user/routing');
+
+
 // TODO All routing
-// use like that route.use('/register', register);
+route.use('/tasks', tasksRouters);
+route.use('/user', userRouters);
 
 module.exports = route;

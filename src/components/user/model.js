@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const { Schema } = mongoose;
+const {Schema} = mongoose;
 
 const userSchema = Schema({
   password: {
@@ -11,7 +11,12 @@ const userSchema = Schema({
     type: String,
     required: true,
   },
-  roles: [{ type: Schema.Types.ObjectId, ref: 'user_roles' }],
+  roles: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'user_roles',
+    },
+  ],
 });
 
 const rolesSchema = Schema({
@@ -33,6 +38,7 @@ const sessionSchema = Schema({
   id_user: {
     type: Schema.Types.ObjectId,
     required: true,
+    unique: true,
   },
   session_id: {
     type: String,

@@ -4,19 +4,18 @@ require('../user/model');
 const {Schema} = mongoose;
 
 const taskSchema = new Schema({
-  id_user: [
+  // Maybe this don't need, because we have this id in allTasksSchema
+  id_user: {
+    type: mongoose.Types.ObjectId,
+    required: true,
+  },
+  role: [
     {
       type: mongoose.Types.ObjectId,
-      ref: 'users',
+      ref: 'user_roles',
     },
   ],
-  id_role: [
-    {
-      type: mongoose.Types.ObjectId,
-      ref: 'user_rolesы',
-    },
-  ],
-  id_priority: [
+  priority: [
     {
       type: mongoose.Types.ObjectId,
       ref: 'priorities',
@@ -41,20 +40,20 @@ const taskSchema = new Schema({
   done: {
     type: Boolean,
     required: true,
+    default: false,
   },
 });
 
 const allTasksSchema = new Schema({
-  id_task: [
+  id_user: {
+    type: mongoose.Types.ObjectId,
+    required: true,
+    unique: true,
+  },
+  tasks: [
     {
       type: mongoose.Types.ObjectId,
       ref: 'tasks',
-    },
-  ],
-  id_user: [
-    {
-      type: mongoose.Types.ObjectId,
-      ref: 'users',
     },
   ],
 });
@@ -63,10 +62,12 @@ const prioritySchema = new Schema({
   name: {
     type: String,
     required: true,
+    unique: true,
   },
   type: {
     type: String,
     required: true,
+    unique: true,
   },
 });
 
