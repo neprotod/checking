@@ -3,9 +3,9 @@ const route = Router();
 
 const taskController = require('./controller');
 
-route.get('/tasks', taskController.getAllUserTask);
-route.post('/tasks', taskController.createTask);
-route.put('/tasks/:id', taskController.updateTask);
-route.delete('/tasks/:id', taskController.deleteTask);
+route.get('/', taskController.getAllUserTask);
+route.post('/', taskController.createTask);
+route.put('/:id', taskController.updateTask);
+route.delete('/:id', taskController.deleteTask);
 
 module.exports = route;
