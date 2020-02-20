@@ -60,33 +60,94 @@ const Role = mongoose.model('user_roles', rolesSchema);
 const Session = mongoose.model('sessions', sessionSchema);
 
 module.exports = {
-  async createUser(data) {
-    const user = new User(data);
+  /**
+   * Create user in db
+   *
+   * @param {String} email user email
+   * @param {String} password bcrypt hex
+   * @return {{}} created result in db
+   *
+   */
+  async createUser(email, password) {
+    const user = new User(email, password);
     const result = await user.save();
     return result;
   },
-  async createRole(data) {
-    const role = new Role(data);
+  /**
+   * Update user in db
+   *
+   * @param {String} id
+   * @param {{}} data data which must update
+   * @return {{}} updated result in db
+   *
+   */
+  async updateUser(id, data) {
+    const result = await User.findOneAndUpdate(id, data);
+    return result;
+  },
+  /**
+   * Create role in db
+   *
+   * @param {String} name role name
+   * @param {String} type role type
+   * @return {{}} created result in db
+   *
+   */
+  async createRole(name, type) {
+    const role = new Role(name, type);
     const result = await role.save();
     return result;
   },
+  /**
+   * Find role by id in db
+   *
+   * @param {String} id
+   * @return {{}} finded role
+   *
+   */
   async getRole(id) {
     const result = await Role.findById(id);
     return result;
   },
+  /**
+   * Find and delete role by id in db
+   *
+   * @param {String} id
+   *
+   */
   async deleteRole(id) {
     const result = await Role.findByIdAndDelete(id);
     return result;
   },
+  /**
+   * Create session in db
+   *
+   * @param {{}} data session object
+   * @return {{}} created result in db
+   *
+   */
   async createSession(data) {
     const session = new Session(data);
     const result = await session.save();
     return result;
   },
+  /**
+   * Find session by id in db
+   *
+   * @param {String} id
+   * @return {{}} finded session
+   *
+   */
   async getSession(id) {
     const result = await Session.findById(id);
     return result;
   },
+  /**
+   * Find and delete session by id in db
+   *
+   * @param {String} id
+   *
+   */
   async deleteSession(id) {
     const result = await Session.findByIdAndDelete(id);
     return result;

@@ -1,16 +1,6 @@
 const TaskModel = require('./model');
 
 module.exports = {
-  async getAllRecipes(req, res) {
-    try {
-      const tasks = await TaskModel.getAllTasks(req.body);
-      res.status(200).json(tasks);
-    } catch (err) {
-      console.error('Database error: ', err.message);
-      res.status(500).json({errors: 'Database error'});
-    }
-  },
-
   async createTask(req, res) {
     try {
       const task = await TaskModel.createTask(req.body);
@@ -55,7 +45,6 @@ module.exports = {
   async getAllUserTask(req, res) {
     try {
       const tasks = await TaskModel.getAllUserTask(req.params.id);
-      // лібо тут с боді брати
       res.status(200).json(tasks);
     } catch (err) {
       console.error('Database error: ', err.message);
