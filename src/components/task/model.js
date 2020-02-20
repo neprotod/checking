@@ -1,16 +1,10 @@
 const mongoose = require('mongoose');
 const User = require('../user/model');
 
-const taskSchema = mongoose.Schema({
+const taskSchema = mongoose.Schema({});
 
-});
-
-const allTasksSchema = mongoose.Schema({
-  
-});
-const prioritySchema = mongoose.Schema({
-
-});
+const allTasksSchema = mongoose.Schema({});
+const prioritySchema = mongoose.Schema({});
 
 const Task = mongoose.model('tasks', taskSchema);
 

@@ -54,6 +54,10 @@ const Role = mongoose.model('user_roles', rolesSchema);
 const Session = mongoose.model('sessions', sessionSchema);
 
 module.exports = {
+  /**
+   *
+   * @param {*} data
+   */
   async createUser(data) {
     const user = new User(data);
     const result = await user.save();
