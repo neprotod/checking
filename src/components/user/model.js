@@ -61,7 +61,6 @@ const Session = mongoose.model('sessions', sessionSchema);
 
 module.exports = {
   /**
-   *
    * Create user in db
    *
    * @param {String} email user email
@@ -75,7 +74,6 @@ module.exports = {
     return result;
   },
   /**
-   *
    * Update user in db
    *
    * @param {String} id
@@ -88,7 +86,6 @@ module.exports = {
     return result;
   },
   /**
-   *
    * Create role in db
    *
    * @param {String} name role name
@@ -102,7 +99,6 @@ module.exports = {
     return result;
   },
   /**
-   *
    * Find role by id in db
    *
    * @param {String} id
@@ -114,7 +110,6 @@ module.exports = {
     return result;
   },
   /**
-   *
    * Find and delete role by id in db
    *
    * @param {String} id
@@ -125,7 +120,6 @@ module.exports = {
     return result;
   },
   /**
-   *
    * Create session in db
    *
    * @param {{}} data session object
@@ -138,7 +132,6 @@ module.exports = {
     return result;
   },
   /**
-   *
    * Find session by id in db
    *
    * @param {String} id
@@ -150,7 +143,6 @@ module.exports = {
     return result;
   },
   /**
-   *
    * Find and delete session by id in db
    *
    * @param {String} id
