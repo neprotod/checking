@@ -10,4 +10,6 @@ route.post('/', validate.createTask, taskController.createTask);
 route.put('/:id', validate.updateTask, taskController.updateTask);
 route.delete('/:id', taskController.deleteTask);
 
+route.get('/priority', taskController.getAllPriority);
+
 module.exports = route;
