@@ -15,6 +15,7 @@ class Custom extends AuthInterface {
    * Add user to session
    *
    * @param {{}} user
+   * @return {String} jwt signature
    */
   async addUserToSession(user) {
     const sessionId = uuid();
@@ -81,6 +82,7 @@ class Custom extends AuthInterface {
    * Set session id to session collection
    *
    * @param {*} user
+   * @return {String} jwt signature
    */
   async _saveSignature(user) {
     const sessionId = uuid();
