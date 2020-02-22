@@ -7,4 +7,4 @@ class Google extends AuthInterface {
 
 }
 
-return Google;
+module.exports = Google;
