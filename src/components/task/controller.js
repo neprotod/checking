@@ -16,8 +16,8 @@ module.exports = {
 
   async updateTask(req, res) {
     try {
-      const {id} = req.params;
-      const task = await TaskModel.updateTask(id, req.body);
+      const {taskId} = req.params;
+      const task = await TaskModel.updateTask(taskId, req.body);
 
       res.status(200).json(task);
     } catch (err) {
