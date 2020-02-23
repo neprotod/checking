@@ -86,6 +86,17 @@ module.exports = {
     return result;
   },
   /**
+   * Find user by email
+   *
+   * @param {String} email user email
+   * @param {String} password user password
+   * @return {{}} found user in db
+   */
+  async getUserByEmailAndPassword(email, password) {
+    const result = await User.findOne({email, password});
+    return result;
+  },
+  /**
    * Create user in db
    *
    * @param {String} email user email
@@ -131,7 +142,7 @@ module.exports = {
     return result;
   },
   /**
-   * Find all roles in bd
+   * Find all roles in db
    *
    * @return {{}} found all roles
    */
