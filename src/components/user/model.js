@@ -29,10 +29,6 @@ const rolesSchema = Schema({
     type: String,
     required: true,
   },
-  type: {
-    type: String,
-    required: true,
-  },
   id_user: {
     type: Schema.Types.ObjectId,
     required: true,
@@ -69,12 +65,21 @@ const Role = mongoose.model('user_roles', rolesSchema);
 const Session = mongoose.model('sessions', sessionSchema);
 
 module.exports = {
-
+  /**
+   * Find user by id
+   *
+   * @param {String} id user id
+   * @return {{}} found user in db
+   */
+  async getUserById(id) {
+    const result = await User.findById(id);
+    return result;
+  },
   /**
    * Find user by email
    *
-   * @param {*} email
-   * @return {{}}
+   * @param {*} email user email
+   * @return {{}} found user in db
    */
   async getUserByEmail(email) {
     const result = await User.findOne({email});
@@ -101,38 +106,90 @@ module.exports = {
    * @return {{}} updated result in db
    */
   async updateUser(id, data) {
-    const result = await User.findOneAndUpdate(id, data);
+    const result = await User.findOneAndUpdate({_id: id}, data, {new: true});
     return result;
   },
   /**
    * Create role in db
    *
-   * @param {String} name role name
-   * @param {String} type role type
-   * @return {{}} created result in db
+   * @param {{}} data role name
+   * @return {{}} created role in db
    */
-  async createRole(name, type) {
-    const role = new Role(name, type);
+  async createRole(data) {
+    const role = new Role(data);
     const result = await role.save();
-    return result;
-  },
-  /**
-   * Find role by id in db
-   *
-   * @param {String} id
-   * @return {{}} found a role
-   */
-  async getRole(id) {
-    const result = await Role.findById(id);
     return result;
   },
   /**
    * Find and delete role by id in db
    *
-   * @param {String} id
+   * @param {String} id role id
+   * @return {{}} deleted role from db
    */
   async deleteRole(id) {
     const result = await Role.findByIdAndDelete(id);
+    return result;
+  },
+  /**
+   * Find all roles in bd
+   *
+   * @return {{}} found all roles
+   */
+  async getAllRoles() {
+    const result = await Role.find();
+    return result;
+  },
+  /**
+   * Find all user roles by user id
+   * @param {String} userId user id
+   * @return {{}} found all user roles
+   */
+  async getAllUserRoles(userId) {
+    const allRoles = await this.getAllRoles();
+    const result = allRoles.filter(
+      role => role.id_user.toString() === userId.toString(),
+    );
+    return result;
+  },
+  /**
+   * Check role name for duplicate
+   *
+   * @param {String} roleName role name
+   * @param {String} userId user id
+   * @return {{}} found all user roles
+   */
+  async checkDuplicate(roleName, userId) {
+    const allRoles = await this.getAllRoles();
+    const result = allRoles.some(
+      role =>
+        role.id_user.toString() === userId.toString() && role.name === roleName,
+    );
+    return result;
+  },
+  /**
+   * Find user by id in db and add role id
+   *
+   * @param {String} userId user id
+   * @param {String} roleId role id
+   * @return {{}} updated user
+   */
+  async setRoleToUser(userId, roleId) {
+    const user = await this.getUserById(userId);
+    const updatedRoles = [...user.roles, roleId];
+    const result = await this.updateUser(userId, {roles: updatedRoles});
+    return result;
+  },
+  /**
+   * Find user by id in db and delete role by id
+   *
+   * @param {String} userId user id
+   * @param {String} roleId role id
+   * @return {{}} updated user
+   */
+  async deleteRoleFromUser(userId, roleId) {
+    const user = await this.getUserById(userId);
+    const updatedRoles = user.roles.filter(role => role !== roleId);
+    const result = await this.updateUser(userId, {roles: updatedRoles});
     return result;
   },
   /**
