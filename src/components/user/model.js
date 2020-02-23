@@ -49,10 +49,6 @@ const sessionSchema = Schema({
   },
   session_id: {
     type: String,
-    required: true,
-    index: {
-      unique: true,
-    },
   },
   expire: {
     type: Date,
@@ -69,7 +65,6 @@ const Role = mongoose.model('user_roles', rolesSchema);
 const Session = mongoose.model('sessions', sessionSchema);
 
 module.exports = {
-
   /**
    * Find user by email
    *
@@ -153,7 +148,6 @@ module.exports = {
    * @return {{}} found a session
    */
   async getSession(session_id) {
-    // const result = await Session.find({session_id});
     const result = await Session.aggregate([
       {
         $match: {session_id},
@@ -178,8 +172,7 @@ module.exports = {
   async deleteSession(session_id) {
     const session = await Session.findOne({session_id});
     session.session_id = null;
-    await session.save();
-    return true;
+    return await session.save();
   },
 
   /**
