@@ -64,7 +64,7 @@ class Custom extends AuthInterface {
     // test password
     const test = await bcrypt.compare(password, user.password);
     if (!test) {
-      result.errors.push({password: 'Don\'t find user'});
+      result.errors.push({password: "Don't find user"});
       return result;
     }
 

@@ -32,6 +32,7 @@
             "varsIgnorePattern": "should|expect"
             }
         ],
-        "new-cap": 0
+        "new-cap": 0,
+        "quotes": ["single", { "avoidEscape": true }]
     }
 }
