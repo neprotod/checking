@@ -34,11 +34,7 @@ class Custom extends AuthInterface {
     await User.createSession(toSession);
 
     // Create JWT
-    return await jwt.sign(
-        {id: sessionId},
-        config.jwt_secret,
-        optionalJWT,
-    );
+    return await jwt.sign({id: sessionId}, config.jwt_secret, optionalJWT);
   }
 
   /**
@@ -57,7 +53,7 @@ class Custom extends AuthInterface {
     const user = await User.getUserByEmail(email);
 
     if (!user) {
-      result.errors.push({user: 'Don\'t find user'});
+      result.errors.push({user: "Don't find user"});
       return result;
     }
 
@@ -94,13 +90,8 @@ class Custom extends AuthInterface {
 
     await User.updateSessionId(user._id, sessionId);
 
-
     // Create JWT
-    return await jwt.sign(
-        {id: sessionId},
-        config.jwt_secret,
-        optionalJWT,
-    );
+    return await jwt.sign({id: sessionId}, config.jwt_secret, optionalJWT);
   }
 
   /**
@@ -122,7 +113,7 @@ class Custom extends AuthInterface {
     // Test session
     const session = await User.getSession(decoded.id);
     if (!session) {
-      console.error('This session doesn\'t find');
+      console.error("This session doesn't find");
       return false;
     }
 
@@ -139,6 +130,7 @@ class Custom extends AuthInterface {
     }
 
     req.session = {
+      id_session: decoded.id,
       token,
       id_user: session.id_user,
       user: _.first(session.user),
