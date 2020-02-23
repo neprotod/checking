@@ -12,5 +12,4 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 app.use('/api', rootRout);
-
 module.exports = app;

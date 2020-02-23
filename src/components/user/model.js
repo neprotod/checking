@@ -1,4 +1,8 @@
+/* eslint-disable camelcase */
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const _ = require('lodash');
+const config = require('../../../config');
 
 const {Schema} = mongoose;
 
@@ -10,6 +14,7 @@ const userSchema = Schema({
   email: {
     type: String,
     required: true,
+    index: {unique: true, dropDups: true},
   },
   roles: [
     {
@@ -38,15 +43,15 @@ const sessionSchema = Schema({
   id_user: {
     type: Schema.Types.ObjectId,
     required: true,
-    unique: true,
+    index: {
+      unique: true,
+    },
   },
   session_id: {
     type: String,
-    required: true,
   },
   expire: {
     type: Date,
-    required: true,
   },
   store: {
     type: Object,
@@ -61,15 +66,25 @@ const Session = mongoose.model('sessions', sessionSchema);
 
 module.exports = {
   /**
+   * Find user by email
+   *
+   * @param {*} email
+   * @return {{}}
+   */
+  async getUserByEmail(email) {
+    const result = await User.findOne({email});
+    return result;
+  },
+  /**
    * Create user in db
    *
    * @param {String} email user email
    * @param {String} password bcrypt hex
    * @return {{}} created result in db
-   *
    */
   async createUser(email, password) {
-    const user = new User(email, password);
+    password = await bcrypt.hash(password, config.saltRound);
+    const user = new User({email, password});
     const result = await user.save();
     return result;
   },
@@ -79,7 +94,6 @@ module.exports = {
    * @param {String} id
    * @param {{}} data data which must update
    * @return {{}} updated result in db
-   *
    */
   async updateUser(id, data) {
     const result = await User.findOneAndUpdate(id, data);
@@ -91,7 +105,6 @@ module.exports = {
    * @param {String} name role name
    * @param {String} type role type
    * @return {{}} created result in db
-   *
    */
   async createRole(name, type) {
     const role = new Role(name, type);
@@ -102,8 +115,7 @@ module.exports = {
    * Find role by id in db
    *
    * @param {String} id
-   * @return {{}} finded role
-   *
+   * @return {{}} found a role
    */
   async getRole(id) {
     const result = await Role.findById(id);
@@ -113,7 +125,6 @@ module.exports = {
    * Find and delete role by id in db
    *
    * @param {String} id
-   *
    */
   async deleteRole(id) {
     const result = await Role.findByIdAndDelete(id);
@@ -124,7 +135,6 @@ module.exports = {
    *
    * @param {{}} data session object
    * @return {{}} created result in db
-   *
    */
   async createSession(data) {
     const session = new Session(data);
@@ -134,22 +144,48 @@ module.exports = {
   /**
    * Find session by id in db
    *
-   * @param {String} id
-   * @return {{}} finded session
-   *
+   * @param {String} session_id session_id
+   * @return {{}} found a session
    */
-  async getSession(id) {
-    const result = await Session.findById(id);
-    return result;
+  async getSession(session_id) {
+    const result = await Session.aggregate([
+      {
+        $match: {session_id},
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'id_user',
+          foreignField: '_id',
+          as: 'user',
+        },
+      },
+    ]);
+
+    return _.first(result);
   },
   /**
    * Find and delete session by id in db
    *
-   * @param {String} id
-   *
+   * @param {String} session_id
    */
-  async deleteSession(id) {
-    const result = await Session.findByIdAndDelete(id);
-    return result;
+  async deleteSession(session_id) {
+    const session = await Session.findOne({session_id});
+    session.session_id = null;
+    return await session.save();
+  },
+
+  /**
+   * update session
+   *
+   * @param {String} id_user
+   * @param {String} session_id
+   * @return {Boolean}
+   */
+  async updateSessionId(id_user, session_id) {
+    const session = await Session.findOne({id_user});
+    session.session_id = session_id;
+    await session.save();
+    return true;
   },
 };
