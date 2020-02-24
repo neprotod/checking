@@ -72,8 +72,8 @@ module.exports = {
    * @return {{}} found user in db
    */
   async getUserById(id) {
-    const result = await User.findById(id);
-    return result;
+    const user = await User.findById(id);
+    return user;
   },
   /**
    * Find user by email
@@ -82,43 +82,34 @@ module.exports = {
    * @return {{}} found user in db
    */
   async getUserByEmail(email) {
-    const result = await User.findOne({email});
-    return result;
-  },
-  /**
-   * Find user by email
-   *
-   * @param {String} email user email
-   * @param {String} password user password
-   * @return {{}} found user in db
-   */
-  async getUserByEmailAndPassword(email, password) {
-    const result = await User.findOne({email, password});
-    return result;
+    const user = await User.findOne({email});
+    return user;
   },
   /**
    * Create user in db
    *
    * @param {String} email user email
    * @param {String} password bcrypt hex
-   * @return {{}} created result in db
+   * @return {{}} created user in db
    */
   async createUser(email, password) {
     password = await bcrypt.hash(password, config.saltRound);
-    const user = new User({email, password});
-    const result = await user.save();
-    return result;
+    const newUser = new User({email, password});
+    const user = await newUser.save();
+    return user;
   },
   /**
    * Update user in db
    *
-   * @param {String} id
+   * @param {String} id user id
    * @param {{}} data data which must update
    * @return {{}} updated result in db
    */
   async updateUser(id, data) {
-    const result = await User.findOneAndUpdate({_id: id}, data, {new: true});
-    return result;
+    const updatedUser = await User.findOneAndUpdate({_id: id}, data, {
+      new: true,
+    });
+    return updatedUser;
   },
   /**
    * Create role in db
@@ -127,40 +118,29 @@ module.exports = {
    * @return {{}} created role in db
    */
   async createRole(data) {
-    const role = new Role(data);
-    const result = await role.save();
-    return result;
+    const newRole = new Role(data);
+    const role = await newRole.save();
+    return role;
   },
   /**
    * Find and delete role by id in db
    *
-   * @param {String} id role id
+   * @param {String} roleId role id
    * @return {{}} deleted role from db
    */
-  async deleteRole(id) {
-    const result = await Role.findByIdAndDelete(id);
-    return result;
-  },
-  /**
-   * Find all roles in db
-   *
-   * @return {{}} found all roles
-   */
-  async getAllRoles() {
-    const result = await Role.find();
-    return result;
+  async deleteRole(roleId) {
+    const deletedRole = await Role.findByIdAndDelete(roleId);
+    return deletedRole;
   },
   /**
    * Find all user roles by user id
+   *
    * @param {String} userId user id
    * @return {{}} found all user roles
    */
   async getAllUserRoles(userId) {
-    const allRoles = await this.getAllRoles();
-    const result = allRoles.filter(
-      role => role.id_user.toString() === userId.toString(),
-    );
-    return result;
+    const userRoles = await Role.find({id_user: userId});
+    return userRoles;
   },
   /**
    * Check role name for duplicate
@@ -170,12 +150,9 @@ module.exports = {
    * @return {{}} found all user roles
    */
   async checkDuplicate(roleName, userId) {
-    const allRoles = await this.getAllRoles();
-    const result = allRoles.some(
-      role =>
-        role.id_user.toString() === userId.toString() && role.name === roleName,
-    );
-    return result;
+    const userRoles = await this.getAllUserRoles(userId);
+    const isDuplicate = userRoles.some(role => role.name === roleName);
+    return isDuplicate;
   },
   /**
    * Find user by id in db and add role id
@@ -186,9 +163,9 @@ module.exports = {
    */
   async setRoleToUser(userId, roleId) {
     const user = await this.getUserById(userId);
-    const updatedRoles = [...user.roles, roleId];
-    const result = await this.updateUser(userId, {roles: updatedRoles});
-    return result;
+    user.roles.push(roleId);
+    const updatedUser = await user.save();
+    return updatedUser;
   },
   /**
    * Find user by id in db and delete role by id
@@ -200,8 +177,9 @@ module.exports = {
   async deleteRoleFromUser(userId, roleId) {
     const user = await this.getUserById(userId);
     const updatedRoles = user.roles.filter(role => role !== roleId);
-    const result = await this.updateUser(userId, {roles: updatedRoles});
-    return result;
+    user.roles = updatedRoles;
+    const updatedUser = await user.save();
+    return updatedUser;
   },
   /**
    * Create session in db
