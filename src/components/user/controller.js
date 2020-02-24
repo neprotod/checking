@@ -82,7 +82,9 @@ module.exports = {
       res.status(200).json(userRoles);
     } catch (e) {
       return res.status(400).json({errors: e});
-
+    }
+  },
+  
   async logout(req, res) {
     try {
       const id = req.session.id_session;
