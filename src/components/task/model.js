@@ -4,7 +4,6 @@ require('../user/model');
 const {Schema} = mongoose;
 
 const taskSchema = new Schema({
-  // Maybe this don't need, because we have this id in allTasksSchema
   id_user: {
     type: mongoose.Types.ObjectId,
     required: true,

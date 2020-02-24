@@ -12,9 +12,24 @@ const registrationSchema = Joi.object({
     .required(),
 });
 
+const roleSchema = Joi.object({
+  name: Joi.string()
+    .min(3)
+    .max(20)
+    .required(),
+});
+
 module.exports = {
   registration(req, res, next) {
     const validate = validationUtil.allValidation(req, registrationSchema);
+    if (!_.isEmpty(validate)) {
+      return res.status(400).json({errors: validate});
+    }
+    // Everything is ok
+    next();
+  },
+  createRole(req, res, next) {
+    const validate = validationUtil.allValidation(req, roleSchema);
     if (!_.isEmpty(validate)) {
       return res.status(400).json({errors: validate});
     }
