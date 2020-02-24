@@ -19,9 +19,8 @@ module.exports = {
       // duplicate key
       if (e.code === 11000) {
         return res.status(400).json({errors: ['This user already exist']});
-      } else {
-        return res.status(500).json({errors: e.message});
       }
+      return res.status(500).json({errors: e.message});
     }
   },
 
@@ -83,6 +82,14 @@ module.exports = {
       res.status(200).json(userRoles);
     } catch (e) {
       return res.status(400).json({errors: e});
+
+  async logout(req, res) {
+    try {
+      const id = req.session.id_session;
+      const result = await User.deleteSession(id);
+      res.status(200).json(result);
+    } catch (e) {
+      console.log(e);
     }
   },
 };
