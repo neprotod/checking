@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const {getTasksRoles} = require('../user/model');
+const MatchAdapter = require('../../utils/MatchAdapter');
 
 const {Schema} = mongoose;
 
@@ -114,15 +115,11 @@ module.exports = {
     );
   },
 
-  async getAllUserTask(userId, filter = 'today') {
-    const start = new Date('2020.02.25');
-    const end = new Date('2020.02.26');
+  async getAllUserTask(userId, sort = 'today') {
+    const adapter = new MatchAdapter(sort);
+    const match = adapter.getMatch();
+    if (!match) throw new Error('Filter not found');
 
-    // const tasks = await Tasks.find({id_user: userId}).populate({
-    //   path: 'tasks',
-    //   match: {done: false, title: 'only odne'},
-    // });
-    const match = {start_date: {$gt: start, $lte: end}};
     const tasks = await Tasks.find({id_user: userId}).populate({
       path: 'tasks',
       match,
@@ -133,12 +130,6 @@ module.exports = {
     return await Priority.populate(taskRoute, {
       path: 'tasks.priority',
     });
-  },
-
-  async getUserTaskMatch(filter = 'today') {
-    const start = new Date('2020.02.25');
-    const end = new Date('2020.02.26');
-    const match = {start_date: {$gt: start, $lte: end}};
   },
 
   async getAllPriority() {

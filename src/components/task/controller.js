@@ -55,9 +55,9 @@ module.exports = {
 
   async getAllUserTask(req, res) {
     try {
-      const {filter} = req.query;
+      const {sort} = req.query;
       const userId = req.session.id_user;
-      const tasks = await TaskModel.getAllUserTask(userId, filter);
+      const tasks = await TaskModel.getAllUserTask(userId, sort);
 
       res.status(200).json(tasks);
     } catch (err) {
