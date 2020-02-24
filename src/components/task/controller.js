@@ -28,7 +28,8 @@ module.exports = {
 
   async deleteTask(req, res) {
     try {
-      const task = await TaskModel.deleteTask(req.params.id);
+      const userId = req.session.id_user;
+      const task = await TaskModel.deleteTask(req.params.id, userId);
 
       res.status(200).json(task);
     } catch (err) {
@@ -50,7 +51,8 @@ module.exports = {
 
   async getAllUserTask(req, res) {
     try {
-      const tasks = await TaskModel.getAllUserTask(req.params.id);
+      const userId = req.session.id_user;
+      const tasks = await TaskModel.getAllUserTask(userId);
 
       res.status(200).json(tasks);
     } catch (err) {

@@ -3,11 +3,13 @@ const _ = require('lodash');
 const validationUtil = require('../../utils/validation');
 
 const createTaskSchema = Joi.object({
-  title: Joi.string().require(),
-  description: Joi.string().require(),
-  start_date: Joi.string().require(),
-  end_date: Joi.string().require(),
-  done: Joi.boolean().require(),
+  role: Joi.string().required(),
+  priority: Joi.string().required(),
+  title: Joi.string().required(),
+  description: Joi.string().required(),
+  start_date: Joi.string().required(),
+  end_date: Joi.string().required(),
+  done: Joi.boolean().required(),
 });
 
 const updateTaskSchema = Joi.object({
@@ -23,7 +25,7 @@ module.exports = {
     const validate = validationUtil.allValidation(req, createTaskSchema);
 
     if (!_.isEmpty(validate)) {
-      return res.state(400).json({errors: validate});
+      return res.status(400).json({errors: validate});
     }
     next();
   },

@@ -30,11 +30,11 @@ const taskSchema = new Schema({
     required: true,
   },
   start_date: {
-    type: Date,
+    type: String,
     required: true,
   },
   end_date: {
-    type: Date,
+    type: String,
     required: true,
   },
   done: {
@@ -78,26 +78,38 @@ const Tasks = mongoose.model('all_tasks', allTasksSchema);
 const Priority = mongoose.model('priorities', prioritySchema);
 
 module.exports = {
-  async getAllTasks() {
-    return await Task.find().sort({date: 'desc'});
-  },
-
   async createTask(data) {
     const task = new Task(data);
-    return await task.save();
+    const createTask = await task.save();
+    let allTasks = await Tasks.findOne({id_user: data.id_user});
+
+    if (!allTasks) {
+      allTasks = new Tasks({id_user: data.id_user, tasks: []});
+    }
+
+    allTasks.tasks.push(createTask._id);
+    await allTasks.save();
+
+    return allTasks;
   },
 
   async updateTask(id, data) {
     return await Task.findByIdAndUpdate(id, data);
   },
 
-  async deleteTask(id) {
+  async deleteTask(id, userId) {
+    const userTasks = await Tasks.findOne({id_user: userId});
+
+    const newUserTasks = userTasks.tasks.filter(task => id !== task.toString());
+
+    await Tasks.findOneAndUpdate({id_user: userId}, {tasks: newUserTasks});
     return await Task.findByIdAndDelete(id);
   },
 
-  // change Tasks
   async getAllUserTask(userId) {
-    return await Tasks.find({id_user: userId});
+    return await Tasks.find({id_user: userId})
+      .populate('tasks')
+      .sort({date: 'desc'});
   },
 
   async getAllPriority() {
