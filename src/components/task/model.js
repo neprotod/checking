@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-require('../user/model');
+const {getTasksRoles} = require('../user/model');
 
 const {Schema} = mongoose;
 
@@ -29,11 +29,11 @@ const taskSchema = new Schema({
     required: true,
   },
   start_date: {
-    type: String,
+    type: Date,
     required: true,
   },
   end_date: {
-    type: String,
+    type: Date,
     required: true,
   },
   done: {
@@ -79,36 +79,66 @@ const Priority = mongoose.model('priorities', prioritySchema);
 module.exports = {
   async createTask(data) {
     const task = new Task(data);
-    const createTask = await task.save();
+    const createTask = await await task.save();
+
+    return createTask;
+  },
+
+  async createUserTask(data, task) {
     let allTasks = await Tasks.findOne({id_user: data.id_user});
 
     if (!allTasks) {
       allTasks = new Tasks({id_user: data.id_user, tasks: []});
     }
 
-    allTasks.tasks.push(createTask._id);
-    await allTasks.save();
+    allTasks.tasks.push(task._id);
 
-    return allTasks;
+    await allTasks.save();
   },
 
   async updateTask(id, data) {
     return await Task.findByIdAndUpdate(id, data);
   },
 
-  async deleteTask(id, userId) {
-    const userTasks = await Tasks.findOne({id_user: userId});
-
-    const newUserTasks = userTasks.tasks.filter(task => id !== task.toString());
-
-    await Tasks.findOneAndUpdate({id_user: userId}, {tasks: newUserTasks});
+  async deleteTask(id) {
     return await Task.findByIdAndDelete(id);
   },
 
-  async getAllUserTask(userId) {
-    return await Tasks.find({id_user: userId})
-      .populate('tasks')
-      .sort({date: 'desc'});
+  async delteUserTask(id, userId) {
+    const userTasks = await Tasks.findOne({id_user: userId});
+
+    const newUserTasks = userTasks.tasks.filter(task => id !== task.toString());
+    return await Tasks.findOneAndUpdate(
+      {id_user: userId},
+      {tasks: newUserTasks},
+    );
+  },
+
+  async getAllUserTask(userId, filter = 'today') {
+    const start = new Date('2020.02.25');
+    const end = new Date('2020.02.26');
+
+    // const tasks = await Tasks.find({id_user: userId}).populate({
+    //   path: 'tasks',
+    //   match: {done: false, title: 'only odne'},
+    // });
+    const match = {start_date: {$gt: start, $lte: end}};
+    const tasks = await Tasks.find({id_user: userId}).populate({
+      path: 'tasks',
+      match,
+    });
+
+    const taskRoute = await getTasksRoles(tasks);
+
+    return await Priority.populate(taskRoute, {
+      path: 'tasks.priority',
+    });
+  },
+
+  async getUserTaskMatch(filter = 'today') {
+    const start = new Date('2020.02.25');
+    const end = new Date('2020.02.26');
+    const match = {start_date: {$gt: start, $lte: end}};
   },
 
   async getAllPriority() {

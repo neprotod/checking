@@ -4,8 +4,11 @@ module.exports = {
   async createTask(req, res) {
     try {
       const userId = req.session.id_user;
+      const taskData = {...req.body, id_user: userId};
 
-      const task = await TaskModel.createTask({...req.body, id_user: userId});
+      const task = await TaskModel.createTask(taskData);
+
+      await TaskModel.createUserTask(taskData, task);
 
       res.status(201).json(task);
     } catch (err) {
@@ -29,7 +32,8 @@ module.exports = {
   async deleteTask(req, res) {
     try {
       const userId = req.session.id_user;
-      const task = await TaskModel.deleteTask(req.params.id, userId);
+      await TaskModel.delteUserTask(req.params.id, userId);
+      const task = await TaskModel.deleteTask(req.params.id);
 
       res.status(200).json(task);
     } catch (err) {
@@ -51,8 +55,9 @@ module.exports = {
 
   async getAllUserTask(req, res) {
     try {
+      const {filter} = req.query;
       const userId = req.session.id_user;
-      const tasks = await TaskModel.getAllUserTask(userId);
+      const tasks = await TaskModel.getAllUserTask(userId, filter);
 
       res.status(200).json(tasks);
     } catch (err) {
