@@ -30,7 +30,7 @@ class MatchAdapter {
 
   actionWeek() {
     const endWeek = Date.getDate(7);
-    const currentDate = new Date();
+    const currentDate = Date.getDate();
 
     return {start_date: {$gt: currentDate, $lte: endWeek}};
   }
