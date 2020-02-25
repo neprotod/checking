@@ -1,3 +1,5 @@
+const Date = require('./Date');
+
 class MatchAdapter {
   constructor(sort) {
     // upper first letter
@@ -20,15 +22,22 @@ class MatchAdapter {
   }
 
   actionToday() {
-    // add
-    const start = new Date('2020.02.25');
-    const end = new Date('2020.02.26');
-    return {start_date: {$gt: start, $lte: end}};
+    const currentDay = Date.getDate();
+    const endDay = Date.getDate(-1);
+
+    return {start_date: {$gt: currentDay, $lte: endDay}};
+  }
+
+  actionWeek() {
+    const endWeek = Date.getDate(7);
+    const currentDate = new Date();
+
+    return {start_date: {$gt: currentDate, $lte: endWeek}};
   }
 
   actionBurned() {
-    const currentDate = new Date();
-    return {end_date: {$gt: currentDate}};
+    const burnedDate = Date.getDate(1);
+    return {start_date: {$gt: burnedDate}};
   }
 
   actionDone() {
@@ -37,7 +46,3 @@ class MatchAdapter {
 }
 
 module.exports = MatchAdapter;
-// const tasks = await Tasks.find({id_user: userId}).populate({
-//   path: 'tasks',
-//   match: {done: false, title: 'only odne'},
-// });
