@@ -28,11 +28,24 @@ class MatchAdapter {
     return {start_date: {$gt: currentDay, $lte: endDay}};
   }
 
+  actionTommorow() {
+    const currentDay = Date.getDate(1);
+    const endDay = Date.getDate(2);
+
+    return {start_date: {$gt: currentDay, $lte: endDay}};
+  }
+
   actionWeek() {
     const endWeek = Date.getDate(7);
     const currentDate = Date.getDate();
 
     return {start_date: {$gt: currentDate, $lte: endWeek}};
+  }
+
+  actionAfterweek() {
+    const startWeek = Date.getDate(7);
+
+    return {start_date: {$gt: startWeek}};
   }
 
   actionBurned() {
