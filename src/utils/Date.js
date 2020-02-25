@@ -1,7 +1,7 @@
 module.exports = {
-  getDate(changeDay) {
+  getDate(changeDay = 0) {
     const today = new Date();
-    let dd = today.getDate();
+    let dd = today.getDate() + changeDay;
     let mm = today.getMonth() + 1; //January is 0!
     const yyyy = today.getFullYear();
 
@@ -12,7 +12,8 @@ module.exports = {
     if (mm < 10) {
       mm = '0' + mm;
     }
+    const result = mm + '/' + dd + '/' + yyyy;
 
-    return mm + '/' + dd + '/' + yyyy;
+    return Date.parse(result);
   },
 };

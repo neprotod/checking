@@ -23,7 +23,7 @@ class MatchAdapter {
 
   actionToday() {
     const currentDay = Date.getDate();
-    const endDay = Date.getDate(-1);
+    const endDay = Date.getDate(1);
 
     return {start_date: {$gt: currentDay, $lte: endDay}};
   }
@@ -36,12 +36,16 @@ class MatchAdapter {
   }
 
   actionBurned() {
-    const burnedDate = Date.getDate(1);
-    return {start_date: {$gt: burnedDate}};
+    const burnedDate = Date.getDate(-1);
+    return {end_date: {$lte: burnedDate}};
   }
 
   actionDone() {
     return {done: true};
+  }
+
+  actionAll() {
+    return {};
   }
 }
 

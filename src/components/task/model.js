@@ -39,7 +39,6 @@ const taskSchema = new Schema({
   },
   done: {
     type: Boolean,
-    required: true,
     default: false,
   },
 });
@@ -116,6 +115,7 @@ module.exports = {
   },
 
   async getAllUserTask(userId, sort = 'today') {
+    console.log(sort);
     const adapter = new MatchAdapter(sort);
     const match = adapter.getMatch();
     if (!match) throw new Error('Filter not found');
