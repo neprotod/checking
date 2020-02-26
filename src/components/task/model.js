@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
-require('../user/model');
+const {getTasksRoles} = require('../user/model');
+const MatchAdapter = require('../../utils/MatchAdapter');
 
 const {Schema} = mongoose;
 
 const taskSchema = new Schema({
-  // Maybe this don't need, because we have this id in allTasksSchema
   id_user: {
     type: mongoose.Types.ObjectId,
     required: true,
@@ -39,7 +39,6 @@ const taskSchema = new Schema({
   },
   done: {
     type: Boolean,
-    required: true,
     default: false,
   },
 });
@@ -78,28 +77,108 @@ const Tasks = mongoose.model('all_tasks', allTasksSchema);
 const Priority = mongoose.model('priorities', prioritySchema);
 
 module.exports = {
-  async getAllTasks() {
-    return await Task.find().sort({date: 'desc'});
-  },
-
+  /**
+   * Create task in tasks db
+   *
+   * @param {{}} data task object
+   * @return {{}} created task
+   */
   async createTask(data) {
     const task = new Task(data);
-    return await task.save();
+    const createTask = await await task.save();
+
+    return createTask;
   },
 
+  /**
+   * Create task in all_tasks db
+   *
+   * @param {{}} data task request object
+   * @param {{}} task task object from tasks db
+   * @return {{}} created task
+   */
+  async createUserTask(data, task) {
+    let allTasks = await Tasks.findOne({id_user: data.id_user});
+
+    if (!allTasks) {
+      allTasks = new Tasks({id_user: data.id_user, tasks: []});
+    }
+
+    allTasks.tasks.push(task._id);
+
+    return await allTasks.save();
+  },
+
+  /**
+   * Update task by id
+   *
+   * @param {String} id task id
+   * @param {{}} data object with updated data
+   * @return {{}} udated task
+   */
   async updateTask(id, data) {
     return await Task.findByIdAndUpdate(id, data);
   },
 
+  /**
+   * Delete task by id
+   *
+   * @param {String} id task id
+   * @return {{}} deleted task
+   */
   async deleteTask(id) {
     return await Task.findByIdAndDelete(id);
   },
 
-  // change Tasks
-  async getAllUserTask(userId) {
-    return await Tasks.find({id_user: userId});
+  /**
+   * Delete task in all_tasks DB by id
+   *
+   * @param {String} id task id
+   * @param {String} userId user id
+   * @return {{}} deleted task
+   */
+  async deleteUserTask(id, userId) {
+    const userTasks = await Tasks.findOne({id_user: userId});
+
+    const newUserTasks = userTasks.tasks.filter(task => id !== task.toString());
+
+    return await Tasks.findOneAndUpdate(
+      {id_user: userId},
+      {tasks: newUserTasks},
+    );
   },
 
+  /**
+   * Get tasks with filter for user
+   *
+   * @param {String} userId user id
+   * @param {String} sort task filter param
+   * @return {Array} tasks
+   */
+  async getAllUserTask(userId, sort = 'today') {
+    const adapter = new MatchAdapter(sort);
+    const match = adapter.getMatch();
+
+    if (!match) throw new Error('Filter not found');
+
+    const tasks = await Tasks.find({id_user: userId}).populate({
+      path: 'tasks',
+      match,
+    });
+
+    const taskRoute = await getTasksRoles(tasks);
+
+    return await Priority.populate(taskRoute, {
+      path: 'tasks.priority',
+    });
+  },
+
+  /**
+   * Get all priority
+   *
+   *
+   * @return {Array} priority
+   */
   async getAllPriority() {
     return await Priority.find();
   },
