@@ -32,7 +32,7 @@ module.exports = {
   async deleteTask(req, res) {
     try {
       const userId = req.session.id_user;
-      await TaskModel.delteUserTask(req.params.id, userId);
+      await TaskModel.deleteUserTask(req.params.id, userId);
       const task = await TaskModel.deleteTask(req.params.id);
 
       res.status(200).json(task);

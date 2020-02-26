@@ -13,6 +13,8 @@ const createTaskSchema = Joi.object({
 });
 
 const updateTaskSchema = Joi.object({
+  role: Joi.string(),
+  priority: Joi.string(),
   title: Joi.string(),
   description: Joi.string(),
   start_date: Joi.string(),
