@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 const mongoose = require('mongoose');
+const findOrCreate = require('mongoose-findorcreate');
 const bcrypt = require('bcrypt');
 const _ = require('lodash');
 const config = require('../../../config');
@@ -9,7 +10,6 @@ const {Schema} = mongoose;
 const userSchema = Schema({
   password: {
     type: String,
-    required: true,
   },
   email: {
     type: String,
@@ -22,7 +22,13 @@ const userSchema = Schema({
       ref: 'user_roles',
     },
   ],
+  googleId: {
+    type: String,
+    unique: true,
+  },
 });
+
+userSchema.plugin(findOrCreate);
 
 const rolesSchema = Schema({
   name: {
@@ -82,7 +88,7 @@ module.exports = {
     const user = await User.findOne({email});
     return user;
   },
-  
+
   /**
    * Create user in db
    *
@@ -96,7 +102,7 @@ module.exports = {
     const user = await newUser.save();
     return user;
   },
-  
+
   /**
    * Update user in db
    *
@@ -110,7 +116,7 @@ module.exports = {
     });
     return updatedUser;
   },
-  
+
   /**
    * Create role in db
    *
@@ -122,7 +128,7 @@ module.exports = {
     const role = await newRole.save();
     return role;
   },
-  
+
   /**
    * Find and delete role by id in db
    *
@@ -133,7 +139,7 @@ module.exports = {
     const deletedRole = await Role.findByIdAndDelete(roleId);
     return deletedRole;
   },
-  
+
   /**
    * Find all user roles by user id
    *
@@ -144,7 +150,7 @@ module.exports = {
     const userRoles = await Role.find({id_user: userId});
     return userRoles;
   },
-  
+
   /**
    * Check role name for duplicate
    *
@@ -157,7 +163,7 @@ module.exports = {
     const isDuplicate = userRoles.some(role => role.name === roleName);
     return isDuplicate;
   },
-  
+
   /**
    * Find user by id in db and add role id
    *
@@ -171,7 +177,7 @@ module.exports = {
     const updatedUser = await user.save();
     return updatedUser;
   },
-  
+
   /**
    * Find user by id in db and delete role by id
    *
@@ -186,7 +192,7 @@ module.exports = {
     const updatedUser = await user.save();
     return updatedUser;
   },
-  
+
   /**
    * Create session in db
    *
@@ -198,7 +204,7 @@ module.exports = {
     const result = await session.save();
     return result;
   },
-  
+
   /**
    * Find session by id in db
    *
@@ -222,7 +228,7 @@ module.exports = {
 
     return _.first(result);
   },
-  
+
   /**
    * Find and delete session by id in db
    *
@@ -247,4 +253,5 @@ module.exports = {
     await session.save();
     return true;
   },
+  User,
 };
