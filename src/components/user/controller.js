@@ -1,4 +1,4 @@
-// loginUser, registerUser
+const _ = require('lodash');
 const User = require('./model');
 const auth = require('../../auth')('custom');
 const Role = require('./model');
@@ -7,6 +7,10 @@ module.exports = {
   async registerUser(req, res) {
     try {
       const {email, password} = req.body;
+      const checkUser = await User.getUserByEmail(email);
+
+      if (!_.isEmpty(checkUser)) throw new Error('This user already exist');
+
       const result = await User.createUser(email, password);
 
       const token = await auth.addUserToSession(result);
@@ -84,7 +88,7 @@ module.exports = {
       return res.status(400).json({errors: e});
     }
   },
-  
+
   async logout(req, res) {
     try {
       const id = req.session.id_session;

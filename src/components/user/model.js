@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 const mongoose = require('mongoose');
+const findOrCreate = require('mongoose-findorcreate');
 const bcrypt = require('bcrypt');
 const _ = require('lodash');
 const config = require('../../../config');
@@ -9,7 +10,6 @@ const {Schema} = mongoose;
 const userSchema = Schema({
   password: {
     type: String,
-    required: true,
   },
   email: {
     type: String,
@@ -22,7 +22,13 @@ const userSchema = Schema({
       ref: 'user_roles',
     },
   ],
+  googleId: {
+    type: String,
+    unique: true,
+  },
 });
+
+userSchema.plugin(findOrCreate);
 
 const rolesSchema = Schema({
   name: {
@@ -253,4 +259,5 @@ module.exports = {
     await session.save();
     return true;
   },
+  User,
 };
