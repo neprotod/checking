@@ -1,8 +1,11 @@
 const {Router} = require('express');
 const passport = require('passport');
 
+const authorization = require('../../auth/index')('custom');
+
 const {
   loginUser,
+  registerGoogle,
   registerUser,
   createRole,
   deleteRole,
@@ -25,9 +28,28 @@ route.get(
 route.get(
   '/google/callback',
   passport.authenticate('google', {failureRedirect: '/login'}),
-  function(req, res) {
+  async function(req, res) {
     const user = req.user;
-    res.json(user);
+
+    // if user have a token, we don't need authorization again
+    const check = await authorization.checkAuth(req);
+    if (check) {
+      return res.status(400).json({errors: ['You are authorized']});
+    }
+
+    let token = '';
+    try {
+      token = await authorization.addUserToSession(user);
+    } catch (e) {
+      token = await authorization._saveSignature(user);
+    }
+
+    res.set('X-Auth-Token', token);
+
+    res.status(200).json(token);
+  },
+  function(e, req, res, next) {
+    return res.status(500).json({errors: e.message});
   },
 );
 
