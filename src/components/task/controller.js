@@ -65,4 +65,15 @@ module.exports = {
       res.status(500).json({errors: 'Database error'});
     }
   },
+
+  async getTask(req, res) {
+    try {
+      const taskId = req.params.id;
+      const task = await TaskModel.getTask(taskId);
+      res.status(200).json(task);
+    } catch (err) {
+      console.error('Database error: ', err.message);
+      res.status(500).json({errors: 'Database error'});
+    }
+  },
 };

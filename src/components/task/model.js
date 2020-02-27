@@ -110,6 +110,16 @@ module.exports = {
   },
 
   /**
+   * Get task by id
+   *
+   * @param {String} id task id
+   * @return {{}} task
+   */
+  async getTask(id) {
+    return await Task.findById(id);
+  },
+
+  /**
    * Update task by id
    *
    * @param {String} id task id
