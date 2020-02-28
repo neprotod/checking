@@ -67,6 +67,12 @@ const Role = mongoose.model('user_roles', rolesSchema);
 const Session = mongoose.model('sessions', sessionSchema);
 
 module.exports = {
+  /**
+   *  Enhancer tasks 
+   * 
+   * @param {{}} tasks model tasks
+   * @return {{}} populate roles
+   */
   async getTasksRoles(tasks) {
     return await Role.populate(tasks, {
       path: 'tasks.role',
@@ -212,7 +218,17 @@ module.exports = {
   },
 
   /**
-   * Find session by id in db
+   * Find session by id_user in db
+   *
+   * @param {String} id_user session_id
+   * @return {{}} found a session
+   */
+  async getSessionByUserId(id_user) {
+    return await Session.findOne({id_user});
+  },
+
+  /**
+   * Find session by session_id in db
    *
    * @param {String} session_id session_id
    * @return {{}} found a session

@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 app.use(passport.initialize());
-require('./src/auth/Google')(passport);
+require('./src/auth/config/google')(passport);
 
 app.use('/api', rootRout);
 module.exports = app;

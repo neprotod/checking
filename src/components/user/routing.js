@@ -5,7 +5,7 @@ const authorization = require('../../auth/index')('custom');
 
 const {
   loginUser,
-  registerGoogle,
+  loginGoogle,
   registerUser,
   createRole,
   deleteRole,
@@ -21,33 +21,16 @@ route.post('/login', validation.registration, loginUser);
 route.post('/register', validation.registration, registerUser);
 route.get('/logout', auth.checkAuth, logout);
 
+// Google
 route.get(
   '/google',
   passport.authenticate('google', {scope: ['profile', 'email', 'openid']}),
 );
+
 route.get(
   '/google/callback',
   passport.authenticate('google', {failureRedirect: '/login'}),
-  async function(req, res) {
-    const user = req.user;
-
-    // if user have a token, we don't need authorization again
-    const check = await authorization.checkAuth(req);
-    if (check) {
-      return res.status(400).json({errors: ['You are authorized']});
-    }
-
-    let token = '';
-    try {
-      token = await authorization.addUserToSession(user);
-    } catch (e) {
-      token = await authorization._saveSignature(user);
-    }
-
-    res.set('X-Auth-Token', token);
-
-    res.status(200).json(token);
-  },
+  loginGoogle,
   function(e, req, res, next) {
     return res.status(500).json({errors: e.message});
   },

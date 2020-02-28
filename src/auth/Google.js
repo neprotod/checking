@@ -1,50 +1,35 @@
-// // TODO: oAuth, maybe passport
-// const AuthInterface = require('./interface/AuthInterface');
-// /**
-//  * Google authorization
-//  */
-// class Google extends AuthInterface {
-
-// }
-
-// module.exports = Google;
+const jwt = require('jsonwebtoken');
+const uuid = require('uuid/v4');
 const _ = require('lodash');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const bcrypt = require('bcrypt');
 
-const Users = require('../components/user/model');
+const User = require('../components/user/model');
+const AuthInterface = require('./interface/AuthInterface');
 
-module.exports = function(passport) {
-  passport.use(
-    new GoogleStrategy(
-      {
-        clientID: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: 'http://localhost:3030/api/user/google/callback',
-      },
-      async function(accessToken, refreshToken, profile, cb) {
-        const checkUser = await Users.getUserByEmail(profile._json.email);
+const config = require('../../config');
 
-        const err = new Error('User already exist');
+class Google extends AuthInterface {
+  /**
+   * Authorized user
+   *
+   * @param {{}} user
+   * @return {{}} token or errors
+   */
+  async authorized(user) {
+    const result = {
+      errors: [],
+      token: '',
+    };
+    
+    const token = await this._saveSignature(user);
+    if (!token) {
+      result.errors.push({token: 'Something wrong'});
+      return result;
+    }
 
-        if (!_.isEmpty(checkUser) && !checkUser.googleId) return cb(err);
+    result.token = token;
+    return result;
+  }
+}
 
-        Users.User.findOrCreate(
-          {googleId: profile.id, email: profile._json.email},
-          function(err, user) {
-            return cb(err, user);
-          },
-        );
-      },
-    ),
-  );
-
-  passport.serializeUser(function(user, done) {
-    done(null, user.id);
-  });
-
-  passport.deserializeUser(function(id, done) {
-    User.findById(id, function(err, user) {
-      done(err, user);
-    });
-  });
-};
+module.exports = Google;
