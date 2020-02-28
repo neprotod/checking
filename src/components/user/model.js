@@ -68,6 +68,11 @@ const Session = mongoose.model('sessions', sessionSchema);
 
 module.exports = {
   /**
+   * Model user
+   */
+  User,
+
+  /**
    *  Enhancer tasks 
    * 
    * @param {{}} tasks model tasks
@@ -275,5 +280,4 @@ module.exports = {
     await session.save();
     return true;
   },
-  User,
 };
