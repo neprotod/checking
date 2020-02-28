@@ -1,12 +1,17 @@
-// loginUser, registerUser
+const _ = require('lodash');
 const User = require('./model');
-const auth = require('../../auth')('custom');
+const authDriver = require('../../auth');
 const Role = require('./model');
 
 module.exports = {
   async registerUser(req, res) {
+    const auth = authDriver('custom');
     try {
       const {email, password} = req.body;
+      const checkUser = await User.getUserByEmail(email);
+
+      if (!_.isEmpty(checkUser)) throw new Error('This user already exist');
+
       const result = await User.createUser(email, password);
 
       const token = await auth.addUserToSession(result);
@@ -24,23 +29,60 @@ module.exports = {
     }
   },
 
+  async loginGoogle(req, res) {
+    const auth = authDriver('google');
+    const user = req.user;
+    const { _id } = user;
+
+    try{
+      // if user have a token, we don't need authorization again
+      const check = await auth.checkAuth(req);
+      if (check) {
+        return res.status(400).json({errors: ['You are authorized']});
+      }
+
+      const checkUser = await User.getSessionByUserId(_id);
+
+      let token = '';
+      if(_.isEmpty(checkUser)){
+        token = await auth.addUserToSession(user);
+      }else{
+        const result = await auth.authorized(user);
+        token = result.token;
+      }
+
+      res.set('X-Auth-Token', token);
+
+      res.status(200).json(token);
+    }catch(e){
+      console.error(e);
+      return res.status(400).json({errors: e.message});
+    }
+    
+  },
+
   async loginUser(req, res) {
+    const auth = authDriver('custom');
     const {email, password} = req.body;
-    // if user have a token, we don't need authorization again
-    const check = await auth.checkAuth(req);
-    if (check) {
-      return res.status(400).json({errors: ['You are authorized']});
+    try{
+       // if user have a token, we don't need authorization again
+      const check = await auth.checkAuth(req);
+      if (check) {
+        return res.status(400).json({errors: ['You are authorized']});
+      }
+
+      const result = await auth.authorized(email, password);
+
+      if (!result.token) {
+        return res.status(400).json({errors: result.errors});
+      }
+
+      res.set('X-Auth-Token', result.token);
+
+      res.status(200).json(result.token);
+    }catch(e){
+      return res.status(400).json({errors: e.message});
     }
-
-    const result = await auth.authorized(email, password);
-
-    if (!result.token) {
-      return res.status(400).json({errors: result.errors});
-    }
-
-    res.set('X-Auth-Token', result.token);
-
-    res.status(200).json(result.token);
   },
 
   async createRole(req, res) {
@@ -58,7 +100,7 @@ module.exports = {
 
       res.status(201).json(role);
     } catch (e) {
-      return res.status(400).json({errors: e});
+      return res.status(400).json({errors: e.message});
     }
   },
 
@@ -70,7 +112,7 @@ module.exports = {
 
       res.status(200).json(role);
     } catch (e) {
-      return res.status(400).json({errors: e});
+      return res.status(400).json({errors: e.message});
     }
   },
 
@@ -81,17 +123,18 @@ module.exports = {
 
       res.status(200).json(userRoles);
     } catch (e) {
-      return res.status(400).json({errors: e});
+      return res.status(400).json({errors: e.message});
     }
   },
-  
+
   async logout(req, res) {
     try {
       const id = req.session.id_session;
       const result = await User.deleteSession(id);
       res.status(200).json(result);
     } catch (e) {
-      console.log(e);
+      console.error(e);
+      return res.status(400).json({errors: e.message});
     }
   },
 };
