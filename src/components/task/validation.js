@@ -1,10 +1,11 @@
 const Joi = require('@hapi/joi');
+Joi.objectId = require('joi-objectid')(Joi)
 const _ = require('lodash');
 const validationUtil = require('../../utils/validation');
 
 const createTaskSchema = Joi.object({
-  role: Joi.string().required(),
-  priority: Joi.string().required(),
+  role: Joi.objectId().required(),
+  priority: Joi.objectId().required(),
   title: Joi.string().required(),
   description: Joi.string().required(),
   start_date: Joi.string().required(),
@@ -29,6 +30,7 @@ module.exports = {
     if (!_.isEmpty(validate)) {
       return res.status(400).json({errors: validate});
     }
+    
     next();
   },
 
