@@ -49,10 +49,6 @@ const sessionSchema = Schema({
   },
   session_id: {
     type: String,
-    required: true,
-    index: {
-      unique: true,
-    },
   },
   expire: {
     type: Date,
@@ -79,6 +75,7 @@ module.exports = {
     const user = await User.findById(id);
     return user;
   },
+
   /**
    * Find user by email
    *
@@ -89,6 +86,7 @@ module.exports = {
     const user = await User.findOne({email});
     return user;
   },
+
   /**
    * Create user in db
    *
@@ -102,6 +100,7 @@ module.exports = {
     const user = await newUser.save();
     return user;
   },
+
   /**
    * Update user in db
    *
@@ -115,6 +114,7 @@ module.exports = {
     });
     return updatedUser;
   },
+
   /**
    * Create role in db
    *
@@ -126,6 +126,7 @@ module.exports = {
     const role = await newRole.save();
     return role;
   },
+
   /**
    * Find and delete role by id in db
    *
@@ -136,6 +137,7 @@ module.exports = {
     const deletedRole = await Role.findByIdAndDelete(roleId);
     return deletedRole;
   },
+
   /**
    * Update role in db
    *
@@ -149,6 +151,7 @@ module.exports = {
     });
     return updatedRole;
   },
+
   /**
    * Get all user roles by user id
    *
@@ -159,6 +162,7 @@ module.exports = {
     const userRoles = await Role.find({id_user: userId});
     return userRoles;
   },
+
   /**
    * Check role name for duplicate
    *
@@ -171,6 +175,7 @@ module.exports = {
     const isDuplicate = userRoles.some(role => role.name === roleName);
     return isDuplicate;
   },
+
   /**
    * Find user by id in db and add role id
    *
@@ -184,6 +189,7 @@ module.exports = {
     const updatedUser = await user.save();
     return updatedUser;
   },
+
   /**
    * Find user by id in db and delete role by id
    *
@@ -198,6 +204,7 @@ module.exports = {
     const updatedUser = await user.save();
     return updatedUser;
   },
+
   /**
    * Create session in db
    *
@@ -209,6 +216,7 @@ module.exports = {
     const result = await session.save();
     return result;
   },
+
   /**
    * Find session by id in db
    *
@@ -216,7 +224,6 @@ module.exports = {
    * @return {{}} found a session
    */
   async getSession(session_id) {
-    // const result = await Session.find({session_id});
     const result = await Session.aggregate([
       {
         $match: {session_id},
@@ -233,6 +240,7 @@ module.exports = {
 
     return _.first(result);
   },
+
   /**
    * Find and delete session by id in db
    *
@@ -241,8 +249,7 @@ module.exports = {
   async deleteSession(session_id) {
     const session = await Session.findOne({session_id});
     session.session_id = null;
-    await session.save();
-    return true;
+    return await session.save();
   },
 
   /**
