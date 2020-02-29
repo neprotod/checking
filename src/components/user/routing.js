@@ -4,6 +4,7 @@ const {
   registerUser,
   createRole,
   deleteRole,
+  updateRole,
   getAllUserRoles,
 } = require('./controller');
 const validation = require('./validation');
@@ -15,6 +16,7 @@ route.post('/login', validation.registration, loginUser);
 route.post('/register', validation.registration, registerUser);
 route.post('/roles', auth.checkAuth, validation.createRole, createRole);
 route.delete('/roles/:id', auth.checkAuth, deleteRole);
+route.put('/roles/:id', auth.checkAuth, updateRole);
 route.get('/roles', auth.checkAuth, getAllUserRoles);
 
 module.exports = route;

@@ -17,6 +17,10 @@ const roleSchema = Joi.object({
     .min(3)
     .max(20)
     .required(),
+  color: Joi.string()
+    .min(4)
+    .max(20)
+    .required(),
 });
 
 module.exports = {
