@@ -29,6 +29,10 @@ const rolesSchema = Schema({
     type: String,
     required: true,
   },
+  color: {
+    type: String,
+    required: true,
+  },
   id_user: {
     type: Schema.Types.ObjectId,
     required: true,
@@ -82,7 +86,7 @@ module.exports = {
     const user = await User.findOne({email});
     return user;
   },
-  
+
   /**
    * Create user in db
    *
@@ -96,7 +100,7 @@ module.exports = {
     const user = await newUser.save();
     return user;
   },
-  
+
   /**
    * Update user in db
    *
@@ -110,7 +114,7 @@ module.exports = {
     });
     return updatedUser;
   },
-  
+
   /**
    * Create role in db
    *
@@ -122,7 +126,7 @@ module.exports = {
     const role = await newRole.save();
     return role;
   },
-  
+
   /**
    * Find and delete role by id in db
    *
@@ -133,9 +137,23 @@ module.exports = {
     const deletedRole = await Role.findByIdAndDelete(roleId);
     return deletedRole;
   },
-  
+
   /**
-   * Find all user roles by user id
+   * Update role in db
+   *
+   * @param {String} roleId role id
+   * @param {{}} data data which must update
+   * @return {{}} updated result in db
+   */
+  async updateRole(roleId, data) {
+    const updatedRole = await Role.findOneAndUpdate({_id: roleId}, data, {
+      new: true,
+    });
+    return updatedRole;
+  },
+
+  /**
+   * Get all user roles by user id
    *
    * @param {String} userId user id
    * @return {{}} found all user roles
@@ -144,7 +162,7 @@ module.exports = {
     const userRoles = await Role.find({id_user: userId});
     return userRoles;
   },
-  
+
   /**
    * Check role name for duplicate
    *
@@ -152,12 +170,12 @@ module.exports = {
    * @param {String} userId user id
    * @return {{}} found all user roles
    */
-  async checkDuplicate(roleName, userId) {
+  async checkRoleDuplicate(roleName, userId) {
     const userRoles = await this.getAllUserRoles(userId);
     const isDuplicate = userRoles.some(role => role.name === roleName);
     return isDuplicate;
   },
-  
+
   /**
    * Find user by id in db and add role id
    *
@@ -171,7 +189,7 @@ module.exports = {
     const updatedUser = await user.save();
     return updatedUser;
   },
-  
+
   /**
    * Find user by id in db and delete role by id
    *
@@ -186,7 +204,7 @@ module.exports = {
     const updatedUser = await user.save();
     return updatedUser;
   },
-  
+
   /**
    * Create session in db
    *
@@ -198,7 +216,7 @@ module.exports = {
     const result = await session.save();
     return result;
   },
-  
+
   /**
    * Find session by id in db
    *
@@ -222,7 +240,7 @@ module.exports = {
 
     return _.first(result);
   },
-  
+
   /**
    * Find and delete session by id in db
    *

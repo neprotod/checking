@@ -18,7 +18,7 @@ module.exports = {
       console.error(e);
       // duplicate key
       if (e.code === 11000) {
-        return res.status(400).json({errors: ['This user already exist']});
+        return res.status(400).json({errors: ['This user already exists']});
       }
       return res.status(500).json({errors: e.message});
     }
@@ -47,7 +47,10 @@ module.exports = {
     try {
       const userId = req.session.id_user;
       const roleToSave = req.body;
-      const isDuplicate = await Role.checkDuplicate(roleToSave.name, userId);
+      const isDuplicate = await Role.checkRoleDuplicate(
+        roleToSave.name,
+        userId,
+      );
 
       if (isDuplicate) {
         return res.status(400).json({errors: ['This role already exists']});
@@ -65,10 +68,23 @@ module.exports = {
   async deleteRole(req, res) {
     try {
       const userId = req.session.id_user;
-      const role = await Role.deleteRole(req.params.id);
-      await User.deleteRoleFromUser(userId, role.id);
+      const roleId = req.params.id;
+      const deletedRole = await Role.deleteRole(roleId);
+      await User.deleteRoleFromUser(userId, roleId);
 
-      res.status(200).json(role);
+      res.status(200).json(deletedRole);
+    } catch (e) {
+      return res.status(400).json({errors: e});
+    }
+  },
+
+  async updateRole(req, res) {
+    try {
+      const roleId = req.params.id;
+      const dataToUpdate = req.body;
+      const updatedRole = await Role.updateRole(roleId, dataToUpdate);
+
+      res.status(200).json(updatedRole);
     } catch (e) {
       return res.status(400).json({errors: e});
     }
@@ -84,7 +100,7 @@ module.exports = {
       return res.status(400).json({errors: e});
     }
   },
-  
+
   async logout(req, res) {
     try {
       const id = req.session.id_session;
