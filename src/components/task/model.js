@@ -124,7 +124,7 @@ module.exports = {
    *
    * @param {String} id task id
    * @param {{}} data object with updated data
-   * @return {{}} udated task
+   * @return {{}} updated task
    */
   async updateTask(id, data) {
     return await Task.findByIdAndUpdate(id, data);
