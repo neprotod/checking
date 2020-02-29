@@ -105,6 +105,7 @@ module.exports = {
     try {
       const id = req.session.id_session;
       const result = await User.deleteSession(id);
+
       res.status(200).json(result);
     } catch (e) {
       console.log(e);
