@@ -9,6 +9,7 @@ const {
   registerUser,
   createRole,
   deleteRole,
+  updateRole,
   getAllUserRoles,
   logout,
 } = require('./controller');
@@ -38,6 +39,7 @@ route.get(
 
 route.post('/roles', auth.checkAuth, validation.createRole, createRole);
 route.delete('/roles/:id', auth.checkAuth, deleteRole);
+route.put('/roles/:id', auth.checkAuth, updateRole);
 route.get('/roles', auth.checkAuth, getAllUserRoles);
 
 module.exports = route;

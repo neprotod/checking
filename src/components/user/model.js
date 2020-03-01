@@ -35,6 +35,10 @@ const rolesSchema = Schema({
     type: String,
     required: true,
   },
+  color: {
+    type: String,
+    required: true,
+  },
   id_user: {
     type: Schema.Types.ObjectId,
     required: true,
@@ -157,8 +161,23 @@ module.exports = {
     return deletedRole;
   },
 
+
   /**
-   * Find all user roles by user id
+   * Update role in db
+   *
+   * @param {String} roleId role id
+   * @param {{}} data data which must update
+   * @return {{}} updated result in db
+   */
+  async updateRole(roleId, data) {
+    const updatedRole = await Role.findOneAndUpdate({_id: roleId}, data, {
+      new: true,
+    });
+    return updatedRole;
+  },
+
+  /**
+   * Get all user roles by user id
    *
    * @param {String} userId user id
    * @return {{}} found all user roles
@@ -175,7 +194,7 @@ module.exports = {
    * @param {String} userId user id
    * @return {{}} found all user roles
    */
-  async checkDuplicate(roleName, userId) {
+  async checkRoleDuplicate(roleName, userId) {
     const userRoles = await this.getAllUserRoles(userId);
     const isDuplicate = userRoles.some(role => role.name === roleName);
     return isDuplicate;
