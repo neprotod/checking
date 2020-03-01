@@ -16,6 +16,9 @@ const userSchema = Schema({
     required: true,
     index: {unique: true, dropDups: true},
   },
+  googleId: {
+    type: String,
+  },
   roles: [
     {
       type: Schema.Types.ObjectId,
