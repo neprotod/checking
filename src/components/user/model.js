@@ -16,9 +16,6 @@ const userSchema = Schema({
     required: true,
     index: {unique: true, dropDups: true},
   },
-  googleId: {
-    type: String,
-  },
   roles: [
     {
       type: Schema.Types.ObjectId,
@@ -27,7 +24,6 @@ const userSchema = Schema({
   ],
   googleId: {
     type: String,
-    unique: true,
   },
 });
 
@@ -80,8 +76,8 @@ module.exports = {
   User,
 
   /**
-   *  Enhancer tasks 
-   * 
+   *  Enhancer tasks
+   *
    * @param {{}} tasks model tasks
    * @return {{}} populate roles
    */
@@ -163,7 +159,6 @@ module.exports = {
     const deletedRole = await Role.findByIdAndDelete(roleId);
     return deletedRole;
   },
-
 
   /**
    * Update role in db

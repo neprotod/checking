@@ -5,7 +5,6 @@ chai.use(chaiAsPromised);
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 chai.use(sinonChai);
-const rewire = require('rewire');
 
 const sandbox = sinon.createSandbox();
 
@@ -37,7 +36,7 @@ describe('User validation', () =>{
 
     it('Every thing is ok', () => {
       validation.registration(req, res, next);
-      
+
       expect(next.calledOnce).to.be.true;
     });
 

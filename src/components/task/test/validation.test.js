@@ -5,7 +5,6 @@ chai.use(chaiAsPromised);
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 chai.use(sinonChai);
-const rewire = require('rewire');
 
 const sandbox = sinon.createSandbox();
 
@@ -42,7 +41,7 @@ describe('Task validation', () =>{
 
     it('Every thing is ok', () => {
       validation.createTask(req, res, next);
-      
+
       expect(next.calledOnce).to.be.true;
     });
 
@@ -77,7 +76,7 @@ describe('Task validation', () =>{
         '"role" with value "string" fails to match the valid mongo id pattern',
         '"priority" with value "string" fails to match the valid mongo id pattern'
       ];
-    
+
 
       validation.createTask(req, res, next);
 
