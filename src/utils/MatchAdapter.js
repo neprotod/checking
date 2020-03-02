@@ -6,15 +6,15 @@ class MatchAdapter {
    *
    * @param {String} sort filter tasks param
    */
-  constructor(sort) {
+  constructor(filter) {
     // upper first letter
     this.action =
       'action' +
-      sort
+      filter
         .toLowerCase()
         .charAt(0)
         .toUpperCase() +
-      sort.slice(1);
+      filter.slice(1);
   }
 
   /**
