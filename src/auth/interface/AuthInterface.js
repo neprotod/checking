@@ -2,7 +2,6 @@
 const jwt = require('jsonwebtoken');
 const uuid = require('uuid/v4');
 const _ = require('lodash');
-const bcrypt = require('bcrypt');
 
 const User = require('../../components/user/model');
 

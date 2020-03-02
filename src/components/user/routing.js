@@ -1,8 +1,6 @@
 const {Router} = require('express');
 const passport = require('passport');
 
-const authorization = require('../../auth/index')('custom');
-
 const {
   loginUser,
   loginGoogle,
