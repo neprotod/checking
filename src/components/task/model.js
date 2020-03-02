@@ -78,6 +78,20 @@ const Priority = mongoose.model('priorities', prioritySchema);
 
 module.exports = {
   /**
+   * Get tasks by role
+   *
+   * @param {String} userId user id
+   * @param {String} roleId role id
+   * @return {Array} tasks by role
+   */
+  async getTasksByRole(userId, roleId) {
+    return await Task.find({
+      id_user: {$in: [userId]},
+      role: {$in: [roleId]},
+    });
+  },
+
+  /**
    * Create task in tasks db
    *
    * @param {{}} data task object

@@ -84,7 +84,7 @@ class MatchAdapter {
    * @return {{}} return burned filter
    */
   actionBurned() {
-    const burnedDate = changedDate.getDate(-1);
+    const burnedDate = changedDate.getDate();
     return {end_date: {$lte: burnedDate}};
   }
 

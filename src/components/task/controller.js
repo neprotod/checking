@@ -55,9 +55,9 @@ module.exports = {
 
   async getAllUserTask(req, res) {
     try {
-      const {filter} = req.query;
+      const {sort} = req.query;
       const userId = req.session.id_user;
-      const tasks = await TaskModel.getAllUserTask(userId, filter);
+      const tasks = await TaskModel.getAllUserTask(userId, sort);
 
       res.status(200).json(tasks);
     } catch (err) {
@@ -71,6 +71,20 @@ module.exports = {
       const taskId = req.params.id;
       const task = await TaskModel.getTask(taskId);
       res.status(200).json(task);
+    } catch (err) {
+      console.error('Database error: ', err.message);
+      res.status(500).json({errors: 'Database error'});
+    }
+  },
+
+  async getTasksByRole(req, res) {
+    try {
+      const userId = req.session.id_user;
+      const roleId = req.query.role;
+
+      const tasks = await TaskModel.getTasksByRole(userId, roleId);
+
+      res.status(200).json(tasks);
     } catch (err) {
       console.error('Database error: ', err.message);
       res.status(500).json({errors: 'Database error'});

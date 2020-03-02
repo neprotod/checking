@@ -2,6 +2,7 @@ const _ = require('lodash');
 const User = require('./model');
 const authDriver = require('../../auth');
 const Role = require('./model');
+const TaskModel = require('../task/model');
 
 module.exports = {
   async registerUser(req, res) {
@@ -32,9 +33,9 @@ module.exports = {
   async loginGoogle(req, res) {
     const auth = authDriver('google');
     const user = req.user;
-    const { _id } = user;
+    const {_id} = user;
 
-    try{
+    try {
       // if user have a token, we don't need authorization again
       const check = await auth.checkAuth(req);
       if (check) {
@@ -44,9 +45,9 @@ module.exports = {
       const checkUser = await User.getSessionByUserId(_id);
 
       let token = '';
-      if(_.isEmpty(checkUser)){
+      if (_.isEmpty(checkUser)) {
         token = await auth.addUserToSession(user);
-      }else{
+      } else {
         const result = await auth.authorized(user);
         token = result.token;
       }
@@ -54,18 +55,17 @@ module.exports = {
       res.set('X-Auth-Token', token);
 
       res.status(200).json(token);
-    }catch(e){
+    } catch (e) {
       console.error(e);
       return res.status(400).json({errors: e.message});
     }
-    
   },
 
   async loginUser(req, res) {
     const auth = authDriver('custom');
     const {email, password} = req.body;
-    try{
-       // if user have a token, we don't need authorization again
+    try {
+      // if user have a token, we don't need authorization again
       const check = await auth.checkAuth(req);
       if (check) {
         return res.status(400).json({errors: ['You are authorized']});
@@ -80,7 +80,7 @@ module.exports = {
       res.set('X-Auth-Token', result.token);
 
       res.status(200).json(result.token);
-    }catch(e){
+    } catch (e) {
       return res.status(400).json({errors: e.message});
     }
   },
@@ -111,6 +111,13 @@ module.exports = {
     try {
       const userId = req.session.id_user;
       const roleId = req.params.id;
+
+      const tasks = await TaskModel.getTasksByRole(userId, roleId);
+
+      if (tasks.length > 0) {
+        return res.status(409).json({errors: 'Role has tasks'});
+      }
+
       const deletedRole = await Role.deleteRole(roleId);
       await User.deleteRoleFromUser(userId, roleId);
 
