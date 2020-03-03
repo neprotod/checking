@@ -78,6 +78,20 @@ const Priority = mongoose.model('priorities', prioritySchema);
 
 module.exports = {
   /**
+   * Get tasks by role
+   *
+   * @param {String} userId user id
+   * @param {String} roleId role id
+   * @return {Array} tasks by role
+   */
+  async getTasksByRole(userId, roleId) {
+    return await Task.find({
+      id_user: {$in: [userId]},
+      role: {$in: [roleId]},
+    });
+  },
+
+  /**
    * Create task in tasks db
    *
    * @param {{}} data task object
@@ -162,11 +176,11 @@ module.exports = {
    * Get tasks with filter for user
    *
    * @param {String} userId user id
-   * @param {String} sort task filter param
+   * @param {String} filter task filter param
    * @return {Array} tasks
    */
-  async getAllUserTask(userId, sort = 'today') {
-    const adapter = new MatchAdapter(sort);
+  async getAllUserTask(userId, filter = 'today') {
+    const adapter = new MatchAdapter(filter);
     const match = adapter.getMatch();
 
     if (!match) throw new Error('Filter not found');

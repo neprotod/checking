@@ -6,15 +6,15 @@ class MatchAdapter {
    *
    * @param {String} sort filter tasks param
    */
-  constructor(sort) {
+  constructor(filter) {
     // upper first letter
     this.action =
       'action' +
-      sort
+      filter
         .toLowerCase()
         .charAt(0)
         .toUpperCase() +
-      sort.slice(1);
+      filter.slice(1);
   }
 
   /**
@@ -84,7 +84,7 @@ class MatchAdapter {
    * @return {{}} return burned filter
    */
   actionBurned() {
-    const burnedDate = changedDate.getDate(-1);
+    const burnedDate = changedDate.getDate();
     return {end_date: {$lte: burnedDate}};
   }
 
