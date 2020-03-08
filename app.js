@@ -4,13 +4,17 @@ const connectionDB = require('./src/db/mongodb');
 const rootRout = require('./src/components');
 const passport = require('passport');
 
+const corsOptions = {
+  exposedHeaders: 'X-Auth-Token',
+};
+
 // Start DB
 connectionDB();
 
 const app = express();
 // Root routs
 app.use(express.json());
-app.use(corsMiddleware());
+app.use(corsMiddleware(corsOptions));
 app.use(express.urlencoded({extended: true}));
 
 app.use(passport.initialize());

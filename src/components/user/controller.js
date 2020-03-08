@@ -54,7 +54,9 @@ module.exports = {
 
       res.set('X-Auth-Token', token);
 
-      res.status(200).json(token);
+      return res
+        .status(301)
+        .redirect(`${req.headers.referer}?token=${encodeURIComponent(token)}`);
     } catch (e) {
       console.error(e);
       return res.status(400).json({errors: e.message});
