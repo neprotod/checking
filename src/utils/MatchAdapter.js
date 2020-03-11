@@ -79,6 +79,18 @@ class MatchAdapter {
   }
 
   /**
+   *Get 7 days filter
+   *
+   * @return {{}} return 7 day from current day filter
+   */
+  actionLastweek() {
+    const startWeek = changedDate.getDate(-7);
+    const currentDate = changedDate.getDate();
+
+    return {start_date: {$gt: startWeek, $lte: currentDate}};
+  }
+
+  /**
    *Get first date in the year to current date
    *
    * @return {{}} return first date in the year to current date  filter
