@@ -3,19 +3,9 @@ Joi.objectId = require('joi-objectid')(Joi)
 const _ = require('lodash');
 const validationUtil = require('../../utils/validation');
 
-const createTaskSchema = Joi.object({
-  role: Joi.objectId().required(),
-  priority: Joi.objectId().required(),
-  title: Joi.string().required(),
-  description: Joi.string().required(),
-  start_date: Joi.string().required(),
-  end_date: Joi.string().required(),
-  done: Joi.boolean().required(),
-});
-
-const updateTaskSchema = Joi.object({
-  role: Joi.string(),
-  priority: Joi.string(),
+const taskSchema = Joi.object({
+  role: Joi.alternatives().try(Joi.objectId(), Joi.string().allow(null).allow('')),
+  priority: Joi.objectId(),
   title: Joi.string(),
   description: Joi.string(),
   start_date: Joi.string(),
@@ -25,7 +15,7 @@ const updateTaskSchema = Joi.object({
 
 module.exports = {
   createTask(req, res, next) {
-    const validate = validationUtil.allValidation(req, createTaskSchema);
+    const validate = validationUtil.allValidation(req, taskSchema, {presence: 'required'});
 
     if (!_.isEmpty(validate)) {
       return res.status(400).json({errors: validate});
@@ -35,7 +25,7 @@ module.exports = {
   },
 
   updateTask(req, res, next) {
-    const validate = validationUtil.allValidation(req, updateTaskSchema);
+    const validate = validationUtil.allValidation(req, taskSchema);
 
     if (!_.isEmpty(validate)) {
       return res.state(400).json({errors: validate});

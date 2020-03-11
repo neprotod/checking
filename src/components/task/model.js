@@ -98,8 +98,11 @@ module.exports = {
    * @return {{}} created task
    */
   async createTask(data) {
+    if(!data.role)
+      data.role = [];
+      
     const task = new Task(data);
-    const createTask = await await task.save();
+    const createTask = await task.save();
 
     return createTask;
   },
@@ -141,6 +144,8 @@ module.exports = {
    * @return {{}} updated task
    */
   async updateTask(id, data) {
+    if(!data.role)
+      data.role = [];
     return await Task.findByIdAndUpdate(id, data);
   },
 
