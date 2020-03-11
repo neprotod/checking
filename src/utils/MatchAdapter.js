@@ -79,13 +79,49 @@ class MatchAdapter {
   }
 
   /**
+   *Get 7 days filter
+   *
+   * @return {{}} return 7 day from current day filter
+   */
+  actionLastweek() {
+    const startWeek = changedDate.getDate(-7);
+    const currentDate = changedDate.getDate();
+
+    return {start_date: {$gt: startWeek, $lte: currentDate}};
+  }
+
+  /**
+   *Get first date in the year to current date
+   *
+   * @return {{}} return first date in the year to current date  filter
+   */
+  actionYear() {
+    const startYearDate = changedDate.getStartYear();
+    const currentDate = changedDate.getDate();
+
+    return {start_date: {$gt: startYearDate, $lte: currentDate}};
+  }
+
+  /**
+   *Get first date in the month to current date
+   *
+   * @return {{}} return first date in the month to current date  filter
+   */
+  actionMonth() {
+    const startMonthDate = changedDate.getStartMonth();
+    const currentDate = changedDate.getDate();
+
+    return {start_date: {$gt: startMonthDate, $lte: currentDate}};
+  }
+
+  /**
    *Get burned filter
    *
    * @return {{}} return burned filter
    */
   actionBurned() {
     const burnedDate = changedDate.getDate();
-    return {end_date: {$lte: burnedDate}};
+    return {end_date: {$lte: burnedDate}, done: false};
   }
 
   /**
