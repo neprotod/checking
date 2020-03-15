@@ -15,6 +15,22 @@ module.exports = {
   },
 
   /**
+   * This function returns start of any day from now with params ti change
+   *
+   * @param {Number} days number of days to change in the date
+   * @return {Number} parse date
+   */
+  getStartDay(days = 0) {
+    const date = new Date(
+      new Date().getFullYear(),
+      new Date().getMonth(),
+      new Date().getDate() + days,
+    );
+
+    return Date.parse(date);
+  },
+
+  /**
    * This function returns start date in the month with month changes in param
    *
    * @param {Number} month number of month to change in the date

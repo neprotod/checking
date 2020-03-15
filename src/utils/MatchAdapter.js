@@ -37,8 +37,8 @@ class MatchAdapter {
    * @return {{}} return today filter
    */
   actionToday() {
-    const currentDay = changedDate.getDate();
-    const endDay = changedDate.getDate(1);
+    const currentDay = changedDate.getStartDay();
+    const endDay = changedDate.getStartDay(1);
 
     return {start_date: {$gt: currentDay, $lte: endDay}};
   }
@@ -49,8 +49,8 @@ class MatchAdapter {
    * @return {{}} return tomorrow filter
    */
   actionTomorrow() {
-    const currentDay = changedDate.getDate(1);
-    const endDay = changedDate.getDate(2);
+    const currentDay = changedDate.getStartDay(1);
+    const endDay = changedDate.getStartDay(2);
 
     return {start_date: {$gt: currentDay, $lte: endDay}};
   }
@@ -61,8 +61,8 @@ class MatchAdapter {
    * @return {{}} return week filter
    */
   actionWeek() {
-    const endWeek = changedDate.getDate(7);
-    const currentDate = changedDate.getDate();
+    const endWeek = changedDate.getStartDay(8);
+    const currentDate = changedDate.getStartDay();
 
     return {start_date: {$gt: currentDate, $lte: endWeek}};
   }
