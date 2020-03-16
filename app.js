@@ -17,6 +17,8 @@ app.use(express.json());
 app.use(corsMiddleware(corsOptions));
 app.use(express.urlencoded({extended: true}));
 
+app.use(express.static('./build'));
+
 app.use(passport.initialize());
 require('./src/auth/config/google')(passport);
 
