@@ -144,7 +144,7 @@ module.exports = {
    * @return {{}} updated task
    */
   async updateTask(id, data) {
-    if(!data.role)
+    if(data.role === '')
       data.role = [];
     return await Task.findByIdAndUpdate(id, data);
   },
