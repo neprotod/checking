@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const config = require('../../../config.js');
 const User = require('./model');
 const authDriver = require('../../auth');
 const Role = require('./model');
@@ -56,7 +57,7 @@ module.exports = {
 
       return res
         .status(301)
-        .redirect(`${req.headers.referer}?token=${encodeURIComponent(token)}`);
+        .redirect(`${config.to_login}?token=${encodeURIComponent(token)}`);
     } catch (e) {
       console.error(e);
       return res.status(400).json({errors: e.message});
