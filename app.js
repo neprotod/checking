@@ -23,4 +23,10 @@ app.use(passport.initialize());
 require('./src/auth/config/google')(passport);
 
 app.use('/api', rootRout);
+
+/* final catch-all route to index.html defined last */
+app.get('/*', (req, res) => {
+  res.sendFile(__dirname + '/build/index.html');
+})
+
 module.exports = app;
