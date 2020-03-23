@@ -6,7 +6,7 @@ class MatchAdapter {
    *
    * @param {String} sort filter tasks param
    */
-  constructor(filter) {
+  constructor(filter, timeZone) {
     // upper first letter
     this.action =
       'action' +
@@ -15,6 +15,8 @@ class MatchAdapter {
         .charAt(0)
         .toUpperCase() +
       filter.slice(1);
+
+    this.timeZone = timeZone;
   }
 
   /**
@@ -37,8 +39,11 @@ class MatchAdapter {
    * @return {{}} return today filter
    */
   actionToday() {
-    const currentDay = changedDate.getStartDay();
-    const endDay = changedDate.getStartDay(1);
+    // console.log(this.timeZone);
+    const currentDay = changedDate.getStartDay(0, this.timeZone);
+    const endDay = changedDate.getStartDay(1, this.timeZone, -1);
+    // console.log(currentDay);
+    // console.log(endDay);
 
     return {start_date: {$gt: currentDay, $lte: endDay}};
   }
@@ -49,8 +54,8 @@ class MatchAdapter {
    * @return {{}} return tomorrow filter
    */
   actionTomorrow() {
-    const currentDay = changedDate.getStartDay(1);
-    const endDay = changedDate.getStartDay(2);
+    const currentDay = changedDate.getStartDay(1, this.timeZone);
+    const endDay = changedDate.getStartDay(2, this.timeZone);
 
     return {start_date: {$gt: currentDay, $lte: endDay}};
   }
@@ -61,8 +66,8 @@ class MatchAdapter {
    * @return {{}} return week filter
    */
   actionWeek() {
-    const endWeek = changedDate.getStartDay(8);
-    const currentDate = changedDate.getStartDay();
+    const endWeek = changedDate.getStartDay(8, this.timeZone);
+    const currentDate = changedDate.getStartDay(0, this.timeZone);
 
     return {start_date: {$gt: currentDate, $lte: endWeek}};
   }
@@ -73,7 +78,7 @@ class MatchAdapter {
    * @return {{}} return after week filter
    */
   actionAfterweek() {
-    const startWeek = changedDate.getDate(7);
+    const startWeek = changedDate.getDate(7, this.timeZone);
 
     return {start_date: {$gt: startWeek}};
   }
@@ -84,8 +89,8 @@ class MatchAdapter {
    * @return {{}} return 7 day from current day filter
    */
   actionLastweek() {
-    const startWeek = changedDate.getStartDay(-7);
-    const currentDate = changedDate.getStartDay(1);
+    const startWeek = changedDate.getStartDay(-7, this.timeZone);
+    const currentDate = changedDate.getStartDay(1, this.timeZone);
 
     return {start_date: {$gt: startWeek, $lte: currentDate}};
   }
@@ -108,8 +113,8 @@ class MatchAdapter {
    * @return {{}} return first date in the month to current date  filter
    */
   actionMonth() {
-    const startMonthDate = changedDate.getStartMonth();
-    const currentDate = changedDate.getStartMonth(1);
+    const startMonthDate = changedDate.getStartMonth(0, this.timeZone);
+    const currentDate = changedDate.getStartMonth(1, this.timeZone);
 
     return {start_date: {$gt: startMonthDate, $lte: currentDate}};
   }
@@ -120,7 +125,7 @@ class MatchAdapter {
    * @return {{}} return burned filter
    */
   actionBurned() {
-    const burnedDate = changedDate.getDate();
+    const burnedDate = changedDate.getDate(0, this.timeZone);
     return {end_date: {$lte: burnedDate}, done: false};
   }
 

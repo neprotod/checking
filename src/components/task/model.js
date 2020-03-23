@@ -98,9 +98,8 @@ module.exports = {
    * @return {{}} created task
    */
   async createTask(data) {
-    if(!data.role)
-      data.role = [];
-      
+    if (!data.role) data.role = [];
+
     const task = new Task(data);
     const createTask = await task.save();
 
@@ -144,8 +143,7 @@ module.exports = {
    * @return {{}} updated task
    */
   async updateTask(id, data) {
-    if(data.role === '')
-      data.role = [];
+    if (data.role === '') data.role = [];
     return await Task.findByIdAndUpdate(id, data);
   },
 
@@ -184,8 +182,8 @@ module.exports = {
    * @param {String} filter task filter param
    * @return {Array} tasks
    */
-  async getAllUserTask(userId, filter = 'today') {
-    const adapter = new MatchAdapter(filter);
+  async getAllUserTask(userId, filter = 'today', timeZone = 0) {
+    const adapter = new MatchAdapter(filter, timeZone);
     const match = adapter.getMatch();
 
     if (!match) throw new Error('Filter not found');
