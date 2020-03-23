@@ -84,8 +84,8 @@ class MatchAdapter {
    * @return {{}} return 7 day from current day filter
    */
   actionLastweek() {
-    const startWeek = changedDate.getDate(-7);
-    const currentDate = changedDate.getDate();
+    const startWeek = changedDate.getStartDay(-7);
+    const currentDate = changedDate.getStartDay(1);
 
     return {start_date: {$gt: startWeek, $lte: currentDate}};
   }
@@ -97,7 +97,7 @@ class MatchAdapter {
    */
   actionYear() {
     const startYearDate = changedDate.getStartYear();
-    const currentDate = changedDate.getDate();
+    const currentDate = changedDate.getStartYear(1);
 
     return {start_date: {$gt: startYearDate, $lte: currentDate}};
   }
@@ -109,7 +109,7 @@ class MatchAdapter {
    */
   actionMonth() {
     const startMonthDate = changedDate.getStartMonth();
-    const currentDate = changedDate.getDate();
+    const currentDate = changedDate.getStartMonth(1);
 
     return {start_date: {$gt: startMonthDate, $lte: currentDate}};
   }
