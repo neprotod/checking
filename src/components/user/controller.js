@@ -4,6 +4,7 @@ const User = require('./model');
 const authDriver = require('../../auth');
 const Role = require('./model');
 const TaskModel = require('../task/model');
+const {mail} = require('../../auth/confirmEmail');
 
 module.exports = {
   async registerUser(req, res) {
@@ -17,6 +18,8 @@ module.exports = {
       const result = await User.createUser(email, password);
 
       const token = await auth.addUserToSession(result);
+
+      mail(email).catch(console.error);
 
       res.set('X-Auth-Token', token);
 
