@@ -10,6 +10,7 @@ module.exports = {
     const copy = new Date(Number(date));
 
     copy.setDate(date.getDate() + days);
+    copy.setMinutes(date.getMinutes() - 1);
 
     return Date.parse(copy);
   },
@@ -25,6 +26,8 @@ module.exports = {
       new Date().getFullYear(),
       new Date().getMonth(),
       new Date().getDate() + days,
+      0,
+      0 - 1,
     );
 
     return Date.parse(date);
