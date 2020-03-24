@@ -13,10 +13,7 @@ const registrationSchema = Joi.object({
 });
 
 const roleSchema = Joi.object({
-  name: Joi.string()
-    .min(3)
-    .max(20)
-    .required(),
+  name: Joi.string().required(),
   color: Joi.string().required(),
 });
 
