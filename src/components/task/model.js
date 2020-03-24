@@ -182,8 +182,8 @@ module.exports = {
    * @param {String} filter task filter param
    * @return {Array} tasks
    */
-  async getAllUserTask(userId, filter = 'today', timeZone = 0) {
-    const adapter = new MatchAdapter(filter, timeZone);
+  async getAllUserTask(userId, filter = 'today') {
+    const adapter = new MatchAdapter(filter);
     const match = adapter.getMatch();
 
     if (!match) throw new Error('Filter not found');

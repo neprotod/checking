@@ -5,12 +5,12 @@ module.exports = {
    * @param {Number} days number of days to change the date
    * @return {Number} parse date
    */
-  getDate(days = 0, timeZone = 0) {
+  getDate(days = 0) {
     const date = new Date();
     const copy = new Date(Number(date));
 
     copy.setDate(date.getDate() + days);
-    copy.setMinutes(date.getMinutes() + timeZone);
+    copy.setMinutes(date.getMinutes() - 1);
 
     return Date.parse(copy);
   },
@@ -21,17 +21,14 @@ module.exports = {
    * @param {Number} days number of days to change in the date
    * @return {Number} parse date
    */
-  getStartDay(days = 0, timeZone = 0, minutes = 0) {
-    console.log(timeZone);
+  getStartDay(days = 0) {
     const date = new Date(
       new Date().getFullYear(),
       new Date().getMonth(),
       new Date().getDate() + days,
       0,
-      0 + timeZone + minutes,
+      0 - 1,
     );
-    console.log(date);
-    console.log(timeZone);
 
     return Date.parse(date);
   },
@@ -42,13 +39,11 @@ module.exports = {
    * @param {Number} month number of month to change in the date
    * @return {Number} parse date
    */
-  getStartMonth(month = 0, timeZone = 0) {
+  getStartMonth(month = 0) {
     const date = new Date(
       new Date().getFullYear(),
       new Date().getMonth() + month,
       1,
-      0,
-      0 + timeZone,
     );
 
     return Date.parse(date);
@@ -60,14 +55,8 @@ module.exports = {
    * @param {Number} year number of year to change in the date
    * @return {Number} parse date
    */
-  getStartYear(year = 0, timeZone = 0) {
-    const date = new Date(
-      new Date().getFullYear() + year,
-      0,
-      1,
-      0,
-      0 + timeZone,
-    );
+  getStartYear(year = 0) {
+    const date = new Date(new Date().getFullYear() + year, 0, 1);
 
     return Date.parse(date);
   },

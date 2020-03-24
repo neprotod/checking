@@ -3,7 +3,6 @@ const TaskModel = require('./model');
 module.exports = {
   async createTask(req, res) {
     try {
-      console.log('done');
       const userId = req.session.id_user;
       const taskData = {...req.body, id_user: userId};
 
@@ -56,13 +55,9 @@ module.exports = {
 
   async getAllUserTask(req, res) {
     try {
-      const {filter, timeZone} = req.query;
+      const {filter} = req.query;
       const userId = req.session.id_user;
-      const tasks = await TaskModel.getAllUserTask(
-        userId,
-        filter,
-        Number(timeZone),
-      );
+      const tasks = await TaskModel.getAllUserTask(userId, filter);
 
       res.status(200).json(tasks);
     } catch (err) {
