@@ -12,7 +12,7 @@ async function mail(email) {
   await transporter.sendMail({
     from: 'betterTeamChecking@rambler.ru',
     to: email,
-    subject: 'Welcome ✔',
+    subject: 'Welcome',
     text:
       'Congratulations! You are successfully registered on https://better-team-checking.herokuapp.com!',
   });
